@@ -3,7 +3,9 @@ import express, { Request, Response } from "express";
 const app = express();
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("online-docs server is running!");
+  res.send("Express + TypeScript online-docs Server!");
 });
 
-app.listen(5000, () => console.log("Server listening on http://localhost:5000"));
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
