@@ -6,7 +6,6 @@ const useSelectionHandler = ({ quill, socket }: HandlerHooksProps) => {
   useEffect(() => {
     const selector: SelectionChangeHandler = (range, oldRange, source) => {
       if (source === "user") socket?.emit(Events.SELECTION_CHANGE, range);
-      console.log(range, "from editor SELECTION_CHANGE");
     };
     quill?.on("selection-change", selector);
 
