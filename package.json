@@ -1,0 +1,25 @@
+{
+  "name": "online-docs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "client": "npm start --prefix client",
+    "server": "npm run dev --prefix server",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/douscriptist/online-docs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/douscriptist/online-docs/issues"
+  },
+  "homepage": "https://github.com/douscriptist/online-docs#readme",
+  "dependencies": {
+    "concurrently": "^6.0.2"
+  }
+}
