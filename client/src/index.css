@@ -27,6 +27,7 @@ body {
   display: flex;
   justify-content: center;
   border: none;
+  padding-bottom: 50px;
 }
 
 #text-editor-container .ql-toolbar {
@@ -38,11 +39,32 @@ body {
   border: none;
   box-shadow: 0 0 5px 0 var(--shadowColor);
   z-index: 1;
+  width: 8.5in;
+  margin-left: 16px;
+  border-radius: 2px;
 }
-/* 
+
+#editor-header {
+  background-color: var(--bgColor);
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 10px;
+  width: 8.5in;
+  box-shadow: 0 0 1px 0 var(--shadowColor);
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 @page {
   margin: 1in;
-} */
+}
 
 @media print {
   body {
@@ -51,7 +73,7 @@ body {
 
   #text-editor-container .ql-editor {
     width: 6.5in;
-    height: 8in;
+    height: 9in;
     margin: 0;
     padding: 0;
     box-shadow: none;
