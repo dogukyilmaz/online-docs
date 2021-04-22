@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import Quill from "quill";
-import { useTextChangeHandler, useSelectionHandler } from "../hooks";
-import { SOCKET_SERVER_URL } from "../types";
+import { useTextChangeHandler, useSelectionHandler } from "hooks";
+import { SOCKET_SERVER_URL } from "types";
 import "quill/dist/quill.snow.css";
 
 interface Props {}
@@ -32,7 +32,6 @@ const TextEditor = (props: Props) => {
   useEffect(() => {
     const s = io(SOCKET_SERVER_URL);
     setSocket(s);
-
     return () => {
       s.disconnect();
     };

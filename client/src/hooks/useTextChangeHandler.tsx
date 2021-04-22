@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Delta from "quill-delta";
 import { TextChangeHandler } from "quill";
-import { Events, HandlerHooksProps } from "../types";
+import { Events, HandlerHooksProps } from "types";
 
 const useTextChangeHandler = ({ quill, socket }: HandlerHooksProps) => {
   useEffect(() => {

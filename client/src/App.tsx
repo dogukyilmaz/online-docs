@@ -1,5 +1,5 @@
-import EditorHeader from "./components/EditorHeader";
-import TextEditor from "./components/TextEditor";
+import EditorHeader from "components/EditorHeader";
+import TextEditor from "components/TextEditor";
 
 function App() {
   return (

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { RangeStatic, SelectionChangeHandler } from "quill";
-import { Events, HandlerHooksProps } from "../types";
+import { Events, HandlerHooksProps } from "types";
 
 const useSelectionHandler = ({ quill, socket }: HandlerHooksProps) => {
   useEffect(() => {
