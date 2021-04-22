@@ -15,11 +15,17 @@ const io: Server = require("socket.io")(httpServer, options);
 enum Events {
   DOCUMENT_CHANGE = "document-change",
   UPDATE_DOCUMENT = "update-document",
+  SELECTION_CHANGE = "selection-change",
+  UPDATE_SELECTION = "update-selection",
 }
 
 io.on("connection", (socket: Socket) => {
   socket.on(Events.DOCUMENT_CHANGE, (delta) => {
     socket.broadcast.emit(Events.UPDATE_DOCUMENT, delta);
+  });
+
+  socket.on(Events.SELECTION_CHANGE, (range) => {
+    socket.broadcast.emit(Events.UPDATE_SELECTION, range);
   });
 });
 
