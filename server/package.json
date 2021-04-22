@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "deploy:heroku": "git push heroku `git subtree split --prefix server main`:main --force"
   },
   "dependencies": {
     "express": "^4.17.1",
