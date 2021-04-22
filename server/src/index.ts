@@ -12,8 +12,15 @@ const options: Partial<ServerOptions> = {
 };
 const io: Server = require("socket.io")(httpServer, options);
 
+enum Events {
+  DOCUMENT_CHANGE = "document-change",
+  UPDATE_DOCUMENT = "update-document",
+}
+
 io.on("connection", (socket: Socket) => {
-  console.log("hello");
+  socket.on(Events.DOCUMENT_CHANGE, (delta) => {
+    socket.broadcast.emit(Events.UPDATE_DOCUMENT, delta);
+  });
 });
 
 app.get("/", (req: Request, res: Response) => {
