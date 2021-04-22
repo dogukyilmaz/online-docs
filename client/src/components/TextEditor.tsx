@@ -1,15 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import Quill, { TextChangeHandler } from "quill";
-import Delta from "quill-delta";
+import Quill from "quill";
+import { useTextChangeHandler, useSelectionHandler } from "../hooks";
+import { SOCKET_SERVER_URL } from "../types";
 import "quill/dist/quill.snow.css";
 
 interface Props {}
-
-enum Events {
-  DOCUMENT_CHANGE = "document-change",
-  UPDATE_DOCUMENT = "update-document",
-}
 
 const TOOLBAR = [
   [{ font: [] }],
@@ -26,42 +22,21 @@ const TOOLBAR = [
   ["clean"],
 ];
 
-const URL = "http://localhost:5000";
-
 const TextEditor = (props: Props) => {
   const [socket, setSocket] = useState<Socket>();
   const [quill, setQuill] = useState<Quill>();
 
+  useTextChangeHandler({ quill, socket });
+  useSelectionHandler({ quill, socket });
+
   useEffect(() => {
-    const s = io(URL);
+    const s = io(SOCKET_SERVER_URL);
     setSocket(s);
 
     return () => {
       s.disconnect();
     };
   }, []);
-
-  useEffect(() => {
-    const changer: TextChangeHandler = (delta, oldContents, source) => {
-      if (source === "user") socket?.emit(Events.DOCUMENT_CHANGE, delta);
-    };
-    quill?.on("text-change", changer);
-
-    return () => {
-      quill?.off("text-change", changer);
-    };
-  }, [socket, quill]);
-
-  useEffect(() => {
-    const updater = (delta: Delta) => {
-      quill?.updateContents(delta);
-    };
-    socket?.on(Events.UPDATE_DOCUMENT, updater);
-
-    return () => {
-      socket?.off(Events.UPDATE_DOCUMENT, updater);
-    };
-  }, [socket, quill]);
 
   const editorRef = useCallback((wrapper) => {
     if (!wrapper) return;
