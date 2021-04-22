@@ -3,7 +3,7 @@ import { Socket, Server, BroadcastOperator, Namespace, ServerOptions, RemoteSock
 
 const app = express();
 const httpServer = require("http").createServer(app);
-const URL = "http://localhost:3000";
+const URL = process.env.URL;
 const options: Partial<ServerOptions> = {
   cors: {
     origin: URL,
