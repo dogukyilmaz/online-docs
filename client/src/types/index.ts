@@ -1,7 +1,8 @@
 import Quill from "quill";
 import { Socket } from "socket.io-client";
 
-export const SOCKET_SERVER_URL = "http://localhost:5000";
+export const SOCKET_SERVER_URL =
+  process.env?.NODE_ENV === "development" ? "http://localhost:5000" : "https://online-docs-server.herokuapp.com/";
 
 export interface HandlerHooksProps {
   quill?: Quill;
