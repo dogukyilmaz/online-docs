@@ -8,7 +8,7 @@ export enum Privacy {
   UNLISTED = "unlisted",
 }
 
-export interface Doc extends Document {
+export interface BaseDoc {
   _id: string;
   title: String;
   content: Object;
@@ -16,7 +16,9 @@ export interface Doc extends Document {
   owner: DocOwner;
 }
 
-const DocSchema: Schema<Doc, any> = new Schema(
+export type Doc = Document<BaseDoc>;
+
+const DocSchema = new Schema(
   {
     _id: { type: String, required: [true, "ID is mandatory!"] },
     title: { type: String, required: [true, "Title is nice to have!"] },
