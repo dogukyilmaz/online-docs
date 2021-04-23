@@ -1,27 +1,37 @@
 import express, { Request, Response } from "express";
 import { Socket, Server, BroadcastOperator, Namespace, ServerOptions, RemoteSocket } from "socket.io";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 const httpServer = require("http").createServer(app);
-const URL = process.env.URL;
 const options: Partial<ServerOptions> = {
   cors: {
-    origin: URL,
+    origin: process.env?.URL?.toString(),
     methods: ["GET", "POST"],
   },
 };
 const io: Server = require("socket.io")(httpServer, options);
 
-enum Events {
+export enum Events {
   DOCUMENT_CHANGE = "document-change",
   UPDATE_DOCUMENT = "update-document",
   SELECTION_CHANGE = "selection-change",
   UPDATE_SELECTION = "update-selection",
+  FETCH_DOCUMENT = "fetch-document",
+  LOAD_DOCUMENT = "load-document",
 }
 
+const TEMP_DATA = "temp data!";
+
 io.on("connection", (socket: Socket) => {
-  socket.on(Events.DOCUMENT_CHANGE, (delta) => {
-    socket.broadcast.emit(Events.UPDATE_DOCUMENT, delta);
+  socket.on(Events.FETCH_DOCUMENT, (docId: string) => {
+    // TODO: check authorization
+    socket.join(docId);
+    socket.emit(Events.LOAD_DOCUMENT, TEMP_DATA);
+    socket.on(Events.DOCUMENT_CHANGE, (delta) => {
+      socket.broadcast.to(docId).emit(Events.UPDATE_DOCUMENT, delta);
+    });
   });
 
   socket.on(Events.SELECTION_CHANGE, (range) => {
