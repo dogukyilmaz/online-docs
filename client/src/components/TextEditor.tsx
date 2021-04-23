@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import Quill from "quill";
-import { useTextChangeHandler, useSelectionHandler } from "hooks";
+import { useTextChangeHandler, useSelectionHandler, useTimer, useFetchDocument } from "hooks";
 import { SOCKET_SERVER_URL } from "types";
 import "quill/dist/quill.snow.css";
-
-interface Props {}
+import { useParams } from "react-router";
 
 const TOOLBAR = [
   [{ font: [] }],
@@ -22,12 +21,21 @@ const TOOLBAR = [
   ["clean"],
 ];
 
-const TextEditor = (props: Props) => {
+interface TextEditorProps {}
+
+interface ParamTypes {
+  docId: string;
+}
+
+const TextEditor = (props: TextEditorProps) => {
   const [socket, setSocket] = useState<Socket>();
   const [quill, setQuill] = useState<Quill>();
+  const { docId } = useParams<ParamTypes>();
 
+  useTimer(quill, 200);
   useTextChangeHandler({ quill, socket });
   useSelectionHandler({ quill, socket });
+  useFetchDocument({ quill, socket, docId });
 
   useEffect(() => {
     const s = io(SOCKET_SERVER_URL);
@@ -43,6 +51,7 @@ const TextEditor = (props: Props) => {
     const editor = document.createElement("div");
     wrapper.append(editor);
     const q = new Quill(editor, { theme: "snow", modules: { toolbar: TOOLBAR } });
+    q.disable();
     setQuill(q);
   }, []);
 

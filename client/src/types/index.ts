@@ -7,6 +7,7 @@ export const SOCKET_SERVER_URL =
 export interface HandlerHooksProps {
   quill?: Quill;
   socket?: Socket;
+  docId?: string;
 }
 
 export enum Events {
@@ -14,4 +15,6 @@ export enum Events {
   UPDATE_DOCUMENT = "update-document",
   SELECTION_CHANGE = "selection-change",
   UPDATE_SELECTION = "update-selection",
+  FETCH_DOCUMENT = "fetch-document",
+  LOAD_DOCUMENT = "load-document",
 }
