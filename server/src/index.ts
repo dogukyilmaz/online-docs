@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { Socket, Server, BroadcastOperator, Namespace, ServerOptions, RemoteSocket } from "socket.io";
 import dotenv from "dotenv";
+import { findDocOrCreate, updateDoc } from "./controllers/doc";
 dotenv.config();
 
 const app = express();
@@ -20,18 +21,25 @@ export enum Events {
   UPDATE_SELECTION = "update-selection",
   FETCH_DOCUMENT = "fetch-document",
   LOAD_DOCUMENT = "load-document",
+  SAVE_DOCUMENT = "save-document",
 }
 
 const TEMP_DATA = "temp data!";
 
 io.on("connection", (socket: Socket) => {
-  socket.on(Events.FETCH_DOCUMENT, (docId: string) => {
+  socket.on(Events.FETCH_DOCUMENT, async (docId: string) => {
     // TODO: check authorization
+    const document = await findDocOrCreate(docId);
+
     socket.join(docId);
-    socket.emit(Events.LOAD_DOCUMENT, TEMP_DATA);
+
+    socket.emit(Events.LOAD_DOCUMENT, document);
+
     socket.on(Events.DOCUMENT_CHANGE, (delta) => {
       socket.broadcast.to(docId).emit(Events.UPDATE_DOCUMENT, delta);
     });
+
+    socket.on(Events.SAVE_DOCUMENT, async (data) => await updateDoc(docId, data));
   });
 
   socket.on(Events.SELECTION_CHANGE, (range) => {
