@@ -17,4 +17,5 @@ export enum Events {
   UPDATE_SELECTION = "update-selection",
   FETCH_DOCUMENT = "fetch-document",
   LOAD_DOCUMENT = "load-document",
+  SAVE_DOCUMENT = "save-document",
 }
