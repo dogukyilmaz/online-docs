@@ -1,4 +1,5 @@
 import Quill from "quill";
+import Delta from "quill-delta";
 import { Socket } from "socket.io-client";
 
 export const SOCKET_SERVER_URL =
@@ -18,4 +19,21 @@ export enum Events {
   FETCH_DOCUMENT = "fetch-document",
   LOAD_DOCUMENT = "load-document",
   SAVE_DOCUMENT = "save-document",
+}
+
+export enum DocumentPrivacy {
+  PRIVATE = "private",
+  PUBLIC = "public",
+  UNLISTED = "unlisted",
+}
+
+export interface Document {
+  _id: String;
+  content: Delta;
+  owner: String[];
+  privacy: DocumentPrivacy;
+  title: String;
+  createdAt: String;
+  updatedAt: String;
+  __v?: Number;
 }
