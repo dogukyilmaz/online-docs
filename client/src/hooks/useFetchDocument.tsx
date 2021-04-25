@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { Events, HandlerHooksProps } from "types";
-import Delta from "quill-delta";
+import { Document, Events, HandlerHooksProps } from "types";
 
 const useFetchDocument = ({ quill, socket, docId }: HandlerHooksProps) => {
   useEffect(() => {
-    socket?.once(Events.LOAD_DOCUMENT, (doc: Delta) => {
-      quill?.setContents(doc);
+    socket?.once(Events.LOAD_DOCUMENT, (doc: Document) => {
+      // TODO: use doc information to for context
+      quill?.setContents(doc.content);
       quill?.enable();
       quill?.focus();
     });
