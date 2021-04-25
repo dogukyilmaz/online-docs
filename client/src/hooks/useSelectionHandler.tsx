@@ -1,8 +1,11 @@
 import { useEffect } from "react";
 import { RangeStatic, SelectionChangeHandler } from "quill";
-import { Events, HandlerHooksProps } from "types";
+import { useDocContext } from "context/DocumentContext";
+import { Events } from "types";
 
-const useSelectionHandler = ({ quill, socket }: HandlerHooksProps) => {
+const useSelectionHandler = () => {
+  const { quill, socket } = useDocContext();
+
   useEffect(() => {
     const selector: SelectionChangeHandler = (range, oldRange, source) => {
       if (source === "user") socket?.emit(Events.SELECTION_CHANGE, range);

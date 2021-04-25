@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
-import { io, Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 import Quill from "quill";
 import { useTextChangeHandler, useSelectionHandler, useTimer, useFetchDocument, useAutoSaver } from "hooks";
 import { useDocContext } from "context/DocumentContext";
@@ -29,17 +29,14 @@ interface ParamTypes {
 }
 
 const TextEditor = (props: TextEditorProps) => {
-  const [socket, setSocket] = useState<Socket>();
-  const [quill, setQuill] = useState<Quill>();
+  const { setDocument, setSocket, setQuill } = useDocContext();
   const { docId } = useParams<ParamTypes>();
 
-  useTimer(quill, 200);
-  useFetchDocument({ quill, socket, docId });
-  useAutoSaver({ quill, socket }, 2000);
-  useTextChangeHandler({ quill, socket });
-  useSelectionHandler({ quill, socket }); // TODO: cursors
-
-  const { setDocument } = useDocContext();
+  useTimer(200);
+  useFetchDocument(docId);
+  useAutoSaver(2000);
+  useTextChangeHandler();
+  useSelectionHandler(); // TODO: cursors
 
   useEffect(() => {
     const s = io(SOCKET_SERVER_URL);
@@ -48,17 +45,20 @@ const TextEditor = (props: TextEditorProps) => {
       s.disconnect();
       setDocument(null);
     };
-  }, [setDocument]);
+  }, [setDocument, setSocket]);
 
-  const editorRef = useCallback((wrapper) => {
-    if (!wrapper) return;
-    wrapper.innerHTML = "";
-    const editor = document.createElement("div");
-    wrapper.append(editor);
-    const q = new Quill(editor, { theme: "snow", modules: { toolbar: TOOLBAR } });
-    q.disable();
-    setQuill(q);
-  }, []);
+  const editorRef = useCallback(
+    (wrapper) => {
+      if (!wrapper) return;
+      wrapper.innerHTML = "";
+      const editor = document.createElement("div");
+      wrapper.append(editor);
+      const q = new Quill(editor, { theme: "snow", modules: { toolbar: TOOLBAR } });
+      q.disable();
+      setQuill(q);
+    },
+    [setQuill]
+  );
 
   return <div id='text-editor-container' ref={editorRef}></div>;
 };

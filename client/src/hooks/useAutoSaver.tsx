@@ -1,7 +1,10 @@
 import { useEffect } from "react";
-import { Events, HandlerHooksProps } from "types";
+import { useDocContext } from "context/DocumentContext";
+import { Events } from "types";
 
-const useAutoSaver = ({ quill, socket }: HandlerHooksProps, intervalMs = 10000) => {
+const useAutoSaver = (intervalMs = 10000) => {
+  const { quill, socket } = useDocContext();
+
   useEffect(() => {
     const interval = setInterval(() => {
       socket?.emit(Events.SAVE_DOCUMENT, quill?.getContents());

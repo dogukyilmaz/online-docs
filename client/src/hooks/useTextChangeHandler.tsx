@@ -1,9 +1,12 @@
 import { useEffect } from "react";
 import Delta from "quill-delta";
 import { TextChangeHandler } from "quill";
-import { Events, HandlerHooksProps } from "types";
+import { useDocContext } from "context/DocumentContext";
+import { Events } from "types";
 
-const useTextChangeHandler = ({ quill, socket }: HandlerHooksProps) => {
+const useTextChangeHandler = () => {
+  const { quill, socket } = useDocContext();
+
   useEffect(() => {
     const changer: TextChangeHandler = (delta, oldContents, source) => {
       if (source === "user") socket?.emit(Events.DOCUMENT_CHANGE, delta);

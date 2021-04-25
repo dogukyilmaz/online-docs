@@ -1,15 +1,7 @@
-import Quill from "quill";
 import Delta from "quill-delta";
-import { Socket } from "socket.io-client";
 
 export const SOCKET_SERVER_URL =
   process.env?.NODE_ENV === "development" ? "http://localhost:5000" : "https://online-docs-server.herokuapp.com/";
-
-export interface HandlerHooksProps {
-  quill?: Quill;
-  socket?: Socket;
-  docId?: string;
-}
 
 export enum Events {
   DOCUMENT_CHANGE = "document-change",

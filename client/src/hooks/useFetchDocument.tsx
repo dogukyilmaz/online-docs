@@ -1,9 +1,9 @@
-import { useDocContext } from "context/DocumentContext";
 import { useEffect } from "react";
-import { Document, Events, HandlerHooksProps } from "types";
+import { useDocContext } from "context/DocumentContext";
+import { Document, Events } from "types";
 
-const useFetchDocument = ({ quill, socket, docId }: HandlerHooksProps) => {
-  const { setDocument } = useDocContext();
+const useFetchDocument = (docId: string) => {
+  const { quill, socket, setDocument } = useDocContext();
   useEffect(() => {
     socket?.once(Events.LOAD_DOCUMENT, ({ content, ...doc }: Document) => {
       // TODO: use doc information to for context
