@@ -10,8 +10,6 @@ const useAutoSaver = ({ quill, socket }: HandlerHooksProps, intervalMs = 10000) 
     return () => clearInterval(interval);
     // eslint-disable-next-line
   }, [quill, socket]);
-
-  return null;
 };
 
 export default useAutoSaver;

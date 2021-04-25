@@ -11,8 +11,6 @@ const useFetchDocument = ({ quill, socket, docId }: HandlerHooksProps) => {
     });
     socket?.emit(Events.FETCH_DOCUMENT, docId);
   }, [quill, socket, docId]);
-
-  return null;
 };
 
 export default useFetchDocument;

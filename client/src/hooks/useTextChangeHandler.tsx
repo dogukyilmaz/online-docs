@@ -25,8 +25,6 @@ const useTextChangeHandler = ({ quill, socket }: HandlerHooksProps) => {
       socket?.off(Events.UPDATE_DOCUMENT, updater);
     };
   }, [socket, quill]);
-
-  return null;
 };
 
 export default useTextChangeHandler;

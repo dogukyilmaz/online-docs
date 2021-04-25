@@ -36,7 +36,7 @@ const TextEditor = (props: TextEditorProps) => {
   useFetchDocument({ quill, socket, docId });
   useAutoSaver({ quill, socket }, 2000);
   useTextChangeHandler({ quill, socket });
-  useSelectionHandler({ quill, socket });
+  useSelectionHandler({ quill, socket }); // TODO: cursors
 
   useEffect(() => {
     const s = io(SOCKET_SERVER_URL);

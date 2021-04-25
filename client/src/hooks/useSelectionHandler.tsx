@@ -25,8 +25,6 @@ const useSelectionHandler = ({ quill, socket }: HandlerHooksProps) => {
       socket?.off(Events.UPDATE_SELECTION, updater);
     };
   }, [socket, quill]);
-
-  return null;
 };
 
 export default useSelectionHandler;
