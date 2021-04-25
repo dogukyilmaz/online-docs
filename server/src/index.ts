@@ -2,7 +2,10 @@ import express, { Request, Response } from "express";
 import { Socket, Server, BroadcastOperator, Namespace, ServerOptions, RemoteSocket } from "socket.io";
 import dotenv from "dotenv";
 import { findDocOrCreate, updateDoc } from "./controllers/doc";
+import connectDB from "./db";
 dotenv.config();
+
+connectDB();
 
 const app = express();
 const httpServer = require("http").createServer(app);
@@ -29,17 +32,20 @@ const TEMP_DATA = "temp data!";
 io.on("connection", (socket: Socket) => {
   socket.on(Events.FETCH_DOCUMENT, async (docId: string) => {
     // TODO: check authorization
-    const document = await findDocOrCreate(docId);
+    const res = await findDocOrCreate(docId);
+    if (!res.success) return;
 
     socket.join(docId);
 
-    socket.emit(Events.LOAD_DOCUMENT, document);
+    socket.emit(Events.LOAD_DOCUMENT, res.doc);
 
     socket.on(Events.DOCUMENT_CHANGE, (delta) => {
       socket.broadcast.to(docId).emit(Events.UPDATE_DOCUMENT, delta);
     });
 
-    socket.on(Events.SAVE_DOCUMENT, async (data) => await updateDoc(docId, data));
+    socket.on(Events.SAVE_DOCUMENT, async (content) => {
+      await updateDoc(docId, content);
+    });
   });
 
   socket.on(Events.SELECTION_CHANGE, (range) => {

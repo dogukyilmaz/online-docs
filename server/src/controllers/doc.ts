@@ -1,17 +1,25 @@
 import Document, { BaseDoc, Doc } from "../models/Document";
 
-type TempDoc = String;
-
 export interface DocResponse {
   success: boolean;
-  doc: Doc | null | TempDoc;
+  doc: Doc | Doc[] | null;
 }
 
-export const findDocOrCreate = async (id: string, data?: Omit<BaseDoc, "_id">): Promise<DocResponse> => {
+const TEMP_DATA = {
+  title: "Adsiz",
+  content: "",
+  privacy: "private",
+  owner: "507f1f77bcf86cd799439011",
+};
+
+export const findDocOrCreate = async (
+  id: string /* FIXME: need?  data?: Omit<BaseDoc, "_id"> */
+): Promise<DocResponse> => {
   try {
     let doc = await Document.findById(id);
     if (doc) return { success: true, doc };
-    doc = await Document.create({ _id: id, content: "" });
+    // TODO: data values etc. // get user id insert
+    doc = await Document.create({ _id: id, ...TEMP_DATA });
     // doc = await Document.create({ _id: id, ...data });
     return { success: true, doc };
   } catch (error) {
@@ -20,6 +28,10 @@ export const findDocOrCreate = async (id: string, data?: Omit<BaseDoc, "_id">): 
   }
 };
 
-export const updateDoc = async (id: string, data: TempDoc) => {
-  await Document.findByIdAndUpdate(id, { data });
+export const updateDoc = async (id: string, content: any) => {
+  try {
+    await Document.findByIdAndUpdate(id, { content }, { runValidators: false }); // TODO: enable validators
+  } catch (error) {
+    console.log(error);
+  }
 };
