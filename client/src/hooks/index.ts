@@ -1,7 +1,7 @@
 import useTextChangeHandler from "./useTextChangeHandler";
 import useSelectionHandler from "./useSelectionHandler";
 import useFetchDocument from "./useFetchDocument";
-import useTimer from "./useTimer";
+import useEditorLoader from "./useEditorLoader";
 import useAutoSaver from "./useAutoSaver";
 
-export { useTextChangeHandler, useSelectionHandler, useFetchDocument, useTimer, useAutoSaver };
+export { useTextChangeHandler, useSelectionHandler, useFetchDocument, useEditorLoader, useAutoSaver };

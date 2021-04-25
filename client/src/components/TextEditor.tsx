@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
 import { io } from "socket.io-client";
 import Quill from "quill";
-import { useTextChangeHandler, useSelectionHandler, useTimer, useFetchDocument, useAutoSaver } from "hooks";
+import { useEditorLoader, useFetchDocument, useAutoSaver, useTextChangeHandler, useSelectionHandler } from "hooks";
 import { useDocContext } from "context/DocumentContext";
 import { SOCKET_SERVER_URL } from "types";
 import "quill/dist/quill.snow.css";
@@ -32,7 +32,7 @@ const TextEditor = (props: TextEditorProps) => {
   const { setDocument, setSocket, setQuill } = useDocContext();
   const { docId } = useParams<ParamTypes>();
 
-  useTimer(200);
+  useEditorLoader(200);
   useFetchDocument(docId);
   useAutoSaver(2000);
   useTextChangeHandler();
