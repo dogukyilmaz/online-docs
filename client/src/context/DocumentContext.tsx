@@ -1,7 +1,7 @@
 import { createContext, FC, useContext, useState } from "react";
 import { Document } from "types";
 
-type NullableDoc = Document | null;
+type NullableDoc = Omit<Document, "content"> | null;
 
 export interface DocumentContext {
   document: NullableDoc;
