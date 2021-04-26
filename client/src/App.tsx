@@ -6,6 +6,8 @@ import MyDocuments from "components/MyDocuments";
 import Profile from "components/Profile";
 
 import DocContextProvider from "context/DocumentContext";
+import Login from "components/Login";
+import Register from "components/Register";
 
 function App() {
   return (
@@ -13,6 +15,9 @@ function App() {
       <div className='App'>
         <Router>
           <Switch>
+            <Route path='/login' component={Login} />
+            <Route path='/register' component={Register} />
+
             {/* TODO: refactor */}
             <Route exact path='/'>
               <Redirect to={`/document/${v4()}`} />
