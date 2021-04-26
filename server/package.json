@@ -6,9 +6,12 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "tsc": "tsc --watch",
+    "dev:tsc": "nodemon dist/index.js && npm run tsc"
   },
   "dependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -16,7 +19,6 @@
     "socket.io": "^4.0.1"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.11",
     "@types/mongoose": "^5.10.5",
     "@types/node": "^14.14.41",

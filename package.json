@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "client": "npm start --prefix client",
-    "server": "npm run dev --prefix server",
+    "server": "npm run dev:tsc --prefix server",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "deploy:server": "git push heroku `git subtree split --prefix server main`:main --force"
   },
