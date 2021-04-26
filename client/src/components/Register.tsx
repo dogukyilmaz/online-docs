@@ -1,14 +1,18 @@
+import { useAuthContext } from "context/AuthContext";
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 
 interface Props {}
 
 const Login = (props: Props) => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { register } = useAuthContext();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    register({ name, email, password });
   };
 
   return (
@@ -26,6 +30,12 @@ const Login = (props: Props) => {
         onSubmit={handleSubmit}
         style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-end" }}
       >
+        <div>
+          <label htmlFor='name'>
+            Name: <input type='name' name='name' id='name' value={name} onChange={(e) => setName(e.target.value)} />
+          </label>
+        </div>
+
         <div>
           <label htmlFor='email'>
             Email:{" "}
