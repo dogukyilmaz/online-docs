@@ -5,28 +5,36 @@ import TextEditor from "components/TextEditor";
 import MyDocuments from "components/MyDocuments";
 import Profile from "components/Profile";
 
+import AuthContextProvider from "context/AuthContext";
 import DocContextProvider from "context/DocumentContext";
+import Login from "components/Login";
+import Register from "components/Register";
 
 function App() {
   return (
-    <DocContextProvider>
-      <div className='App'>
-        <Router>
-          <Switch>
-            {/* TODO: refactor */}
-            <Route exact path='/'>
-              <Redirect to={`/document/${v4()}`} />
-            </Route>
-            <Route path='/my-documents' component={MyDocuments} />
-            <Route path='/profile' component={Profile} />
-            <Route path='/document/:docId'>
-              <EditorHeader />
-              <TextEditor />
-            </Route>
-          </Switch>
-        </Router>
-      </div>
-    </DocContextProvider>
+    <AuthContextProvider>
+      <DocContextProvider>
+        <div className='App'>
+          <Router>
+            <Switch>
+              <Route path='/login' component={Login} />
+              <Route path='/register' component={Register} />
+
+              {/* TODO: refactor */}
+              <Route exact path='/'>
+                <Redirect to={`/document/${v4()}`} />
+              </Route>
+              <Route path='/my-documents' component={MyDocuments} />
+              <Route path='/profile' component={Profile} />
+              <Route path='/document/:docId'>
+                <EditorHeader />
+                <TextEditor />
+              </Route>
+            </Switch>
+          </Router>
+        </div>
+      </DocContextProvider>
+    </AuthContextProvider>
   );
 }
 

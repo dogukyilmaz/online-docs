@@ -13,6 +13,14 @@ export enum Events {
   SAVE_DOCUMENT = "save-document",
 }
 
+export enum AuthEvents {
+  REGISTER = "user:register",
+  REGISTER_RESPONSE = "user:register:response",
+  LOGIN = "user:login",
+  LOGOUT = "user:logout",
+  GET_USER = "user:get",
+}
+
 export enum DocumentPrivacy {
   PRIVATE = "private",
   PUBLIC = "public",

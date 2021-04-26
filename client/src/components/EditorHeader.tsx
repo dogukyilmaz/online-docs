@@ -12,6 +12,7 @@ const EditorHeader = (props: Props) => {
     <div id='editor-header'>
       <div>
         <div>
+          <button onClick={() => history.push("/login")}>login</button>
           <button onClick={() => history.push("/profile")}>profile</button>
           <button onClick={() => history.push("/")}>reset</button>
         </div>
