@@ -3,6 +3,7 @@ import { Socket, Server, BroadcastOperator, Namespace, ServerOptions, RemoteSock
 import dotenv from "dotenv";
 import { findDocOrCreate, updateDoc } from "./controllers/doc";
 import connectDB from "./db";
+import { login, register } from "./controllers/user";
 dotenv.config();
 
 connectDB();
@@ -53,8 +54,24 @@ io.on("connection", (socket: Socket) => {
   });
 });
 
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript online-docs Server!");
+});
+
+app.post("/auth/register", async (req: Request, res: Response) => {
+  const result = await register(req.body);
+  if (!result.success) res.statusCode = 400;
+  res.status(201).json(result);
+});
+
+app.post("/auth/login", async (req: Request, res: Response) => {
+  console.log(req.body);
+  const result = await login(req.body);
+  if (!result.success) res.statusCode = 400;
+  res.status(201).json(result);
 });
 
 const PORT = process.env.PORT || 5000;
