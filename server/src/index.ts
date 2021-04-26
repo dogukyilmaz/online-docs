@@ -28,7 +28,13 @@ export enum Events {
   SAVE_DOCUMENT = "save-document",
 }
 
-const TEMP_DATA = "temp data!";
+export enum AuthEvents {
+  REGISTER = "user:register",
+  REGISTER_RESPONSE = "user:register:response",
+  LOGIN = "user:login",
+  LOGOUT = "user:logout",
+  GET_USER = "user:get",
+}
 
 io.on("connection", (socket: Socket) => {
   socket.on(Events.FETCH_DOCUMENT, async (docId: string) => {
@@ -52,27 +58,33 @@ io.on("connection", (socket: Socket) => {
   socket.on(Events.SELECTION_CHANGE, (range) => {
     socket.broadcast.emit(Events.UPDATE_SELECTION, range);
   });
+
+  socket.on(AuthEvents.REGISTER, async (authInfo) => {
+    const result = await register(authInfo);
+    socket.emit(AuthEvents.REGISTER_RESPONSE, result);
+    console.log(AuthEvents.REGISTER, result);
+  });
 });
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+// app.use(express.urlencoded({ extended: false }));
+// app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript online-docs Server!");
 });
 
-app.post("/auth/register", async (req: Request, res: Response) => {
-  const result = await register(req.body);
-  if (!result.success) res.statusCode = 400;
-  res.status(201).json(result);
-});
+// app.post("/auth/register", async (req: Request, res: Response) => {
+//   const result = await register(req.body);
+//   if (!result.success) res.statusCode = 400;
+//   res.status(201).json(result);
+// });
 
-app.post("/auth/login", async (req: Request, res: Response) => {
-  console.log(req.body);
-  const result = await login(req.body);
-  if (!result.success) res.statusCode = 400;
-  res.status(201).json(result);
-});
+// app.post("/auth/login", async (req: Request, res: Response) => {
+//   console.log(req.body);
+//   const result = await login(req.body);
+//   if (!result.success) res.statusCode = 400;
+//   res.status(201).json(result);
+// });
 
 const PORT = process.env.PORT || 5000;
 
