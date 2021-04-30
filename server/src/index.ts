@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { Socket, Server, BroadcastOperator, Namespace, ServerOptions, RemoteSocket } from "socket.io";
 import dotenv from "dotenv";
+import socketioJwt from "socketio-jwt";
 import { findDocOrCreate, updateDoc } from "./controllers/doc";
 import connectDB from "./db";
 import { login, register } from "./controllers/user";
@@ -16,7 +17,7 @@ const options: Partial<ServerOptions> = {
     methods: ["GET", "POST"],
   },
 };
-const io: Server = require("socket.io")(httpServer, options);
+const io = require("socket.io")(httpServer, options);
 
 export enum Events {
   DOCUMENT_CHANGE = "document-change",
@@ -37,7 +38,21 @@ export enum AuthEvents {
   GET_USER = "user:get",
 }
 
-io.on("connection", (socket: Socket) => {
+export type SocketJWT = Socket & {
+  decoded_token?: any;
+};
+
+io.use(
+  socketioJwt.authorize({
+    secret: process.env.JWT_SECRET!,
+    timeout: 15000,
+    auth_header_required: true,
+    handshake: true,
+  })
+);
+
+io.on("connection", (socket: SocketJWT) => {
+  console.log(socket.decoded_token);
   socket.on(Events.FETCH_DOCUMENT, async (docId: string) => {
     // TODO: check authorization
     const res = await findDocOrCreate(docId);
@@ -69,7 +84,6 @@ io.on("connection", (socket: Socket) => {
   socket.on(AuthEvents.LOGIN, async (authInfo) => {
     const result = await login(authInfo);
     socket.emit(AuthEvents.LOGIN_RESPONSE, result);
-    console.log(AuthEvents.LOGIN, result);
   });
 });
 
