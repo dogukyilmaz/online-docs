@@ -21,7 +21,6 @@ export const register = async (data: BaseUser): Promise<UserResponse> => {
 export const login = async ({ email, password }: Omit<User, "name">): Promise<UserResponse> => {
   try {
     const user = await Usr.findOne({ email }).select("+password");
-    console.log("wewewe", user);
     if (user) {
       const match = await compare(password, user.password);
       if (match) {

@@ -1,3 +1,4 @@
+import { useAuthContext } from "context/AuthContext";
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -6,9 +7,11 @@ interface Props {}
 const Login = (props: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuthContext();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    login({ email, password });
   };
 
   return (

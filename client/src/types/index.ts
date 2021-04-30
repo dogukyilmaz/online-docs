@@ -17,6 +17,7 @@ export enum AuthEvents {
   REGISTER = "user:register",
   REGISTER_RESPONSE = "user:register:response",
   LOGIN = "user:login",
+  LOGIN_RESPONSE = "user:login:response",
   LOGOUT = "user:logout",
   GET_USER = "user:get",
 }

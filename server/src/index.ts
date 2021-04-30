@@ -32,6 +32,7 @@ export enum AuthEvents {
   REGISTER = "user:register",
   REGISTER_RESPONSE = "user:register:response",
   LOGIN = "user:login",
+  LOGIN_RESPONSE = "user:login:response",
   LOGOUT = "user:logout",
   GET_USER = "user:get",
 }
@@ -63,6 +64,12 @@ io.on("connection", (socket: Socket) => {
     const result = await register(authInfo);
     socket.emit(AuthEvents.REGISTER_RESPONSE, result);
     console.log(AuthEvents.REGISTER, result);
+  });
+
+  socket.on(AuthEvents.LOGIN, async (authInfo) => {
+    const result = await login(authInfo);
+    socket.emit(AuthEvents.LOGIN_RESPONSE, result);
+    console.log(AuthEvents.LOGIN, result);
   });
 });
 

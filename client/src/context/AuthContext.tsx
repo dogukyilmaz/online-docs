@@ -23,6 +23,7 @@ export interface AuthenticationContext {
   user: User | null;
   socket?: Socket;
   register: (credentials: AuthUser) => void;
+  login: (credentials: AuthUser) => void;
 }
 
 const AuthContext = createContext<AuthenticationContext>({
@@ -30,6 +31,7 @@ const AuthContext = createContext<AuthenticationContext>({
   user: null,
   socket: undefined,
   register: () => {},
+  login: () => {},
 });
 
 export const useAuthContext = () => useContext(AuthContext);
@@ -48,6 +50,18 @@ const AuthContextProvider: FC = ({ children }) => {
     };
   }, [setSocket]);
 
+  const login = async (userInfo: AuthUser) => {
+    socket?.emit(AuthEvents.LOGIN, userInfo);
+    socket?.on(AuthEvents.LOGIN_RESPONSE, (res) => {
+      // TODO:
+      // load user?
+      // login etc.
+      // ui info/notification
+      console.log({ res }, "client-LOGIN_RESPONSE");
+      socket?.off(AuthEvents.LOGIN_RESPONSE);
+    });
+  };
+
   const register = async (userInfo: AuthUser) => {
     socket?.emit(AuthEvents.REGISTER, userInfo);
     socket?.on(AuthEvents.REGISTER_RESPONSE, (res) => {
@@ -65,6 +79,7 @@ const AuthContextProvider: FC = ({ children }) => {
     user,
     socket,
     register,
+    login,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
