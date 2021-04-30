@@ -3,6 +3,7 @@ import { useParams } from "react-router";
 import { io } from "socket.io-client";
 import Quill from "quill";
 import { useEditorLoader, useFetchDocument, useAutoSaver, useTextChangeHandler, useSelectionHandler } from "hooks";
+import { useAuthContext } from "context/AuthContext";
 import { useDocContext } from "context/DocumentContext";
 import { SOCKET_SERVER_URL } from "types";
 import "quill/dist/quill.snow.css";
@@ -29,6 +30,7 @@ interface ParamTypes {
 }
 
 const TextEditor = (props: TextEditorProps) => {
+  const { token } = useAuthContext();
   const { setDocument, setSocket, setQuill } = useDocContext();
   const { docId } = useParams<ParamTypes>();
 
@@ -39,13 +41,15 @@ const TextEditor = (props: TextEditorProps) => {
   useSelectionHandler(); // TODO: cursors
 
   useEffect(() => {
-    const s = io(SOCKET_SERVER_URL);
+    const s = io(SOCKET_SERVER_URL, {
+      extraHeaders: { Authorization: `Bearer ${token}` },
+    });
     setSocket(s);
     return () => {
       s.disconnect();
       setDocument(null);
     };
-  }, [setDocument, setSocket]);
+  }, [token, setDocument, setSocket]);
 
   const editorRef = useCallback(
     (wrapper) => {

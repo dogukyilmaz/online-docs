@@ -42,13 +42,28 @@ const AuthContextProvider: FC = ({ children }) => {
   const [socket, setSocket] = useState<Socket>();
 
   useEffect(() => {
-    const s = io(SOCKET_SERVER_URL);
+    const s = io(SOCKET_SERVER_URL, {
+      extraHeaders: { Authorization: `Bearer ${token}` },
+    });
+
     setSocket(s);
     console.log("connected");
     return () => {
       s.disconnect();
     };
-  }, [setSocket]);
+  }, [token, setSocket]);
+
+  // useEffect(() => {
+  //   socket &&
+  //     socket.on("unauthorized", (error) => {
+  //       if (error.data.type == "UnauthorizedError" || error.data.code == "invalid_token") {
+  //         // redirect user to login page perhaps?
+  //         console.log("User token has expired");
+  //       } else {
+  //         console.log(error, "errrrr");
+  //       }
+  //     });
+  // }, [socket]);
 
   useEffect(() => {
     const token = localStorage.getItem("online-docs-token");
