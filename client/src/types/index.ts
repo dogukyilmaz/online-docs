@@ -9,6 +9,7 @@ export enum Events {
   SELECTION_CHANGE = "selection-change",
   UPDATE_SELECTION = "update-selection",
   FETCH_DOCUMENT = "fetch-document",
+  FETCH_DOCUMENT_ERROR = "fetch-document:error",
   LOAD_DOCUMENT = "load-document",
   SAVE_DOCUMENT = "save-document",
 }
@@ -19,7 +20,6 @@ export enum AuthEvents {
   LOGIN = "user:login",
   LOGIN_RESPONSE = "user:login:response",
   LOGOUT = "user:logout",
-  GET_USER = "user:get",
 }
 
 export enum DocumentPrivacy {

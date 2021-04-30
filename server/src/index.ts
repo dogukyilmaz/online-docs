@@ -25,6 +25,7 @@ export enum Events {
   SELECTION_CHANGE = "selection-change",
   UPDATE_SELECTION = "update-selection",
   FETCH_DOCUMENT = "fetch-document",
+  FETCH_DOCUMENT_ERROR = "fetch-document:error",
   LOAD_DOCUMENT = "load-document",
   SAVE_DOCUMENT = "save-document",
 }
@@ -53,10 +54,15 @@ io.use(
 
 io.on("connection", (socket: SocketJWT) => {
   console.log(socket.decoded_token);
+  const { user } = socket.decoded_token;
+
   socket.on(Events.FETCH_DOCUMENT, async (docId: string) => {
     // TODO: check authorization
-    const res = await findDocOrCreate(docId);
-    if (!res.success) return;
+    const res = await findDocOrCreate(docId, user);
+    if (!res.success) {
+      socket.emit(Events.FETCH_DOCUMENT_ERROR, res.message);
+      return;
+    }
 
     socket.join(docId);
 
