@@ -50,6 +50,11 @@ const AuthContextProvider: FC = ({ children }) => {
     };
   }, [setSocket]);
 
+  useEffect(() => {
+    const token = localStorage.getItem("online-docs-token");
+    if (token) setToken(token);
+  }, []);
+
   const login = async (userInfo: AuthUser) => {
     socket?.emit(AuthEvents.LOGIN, userInfo);
     socket?.on(AuthEvents.LOGIN_RESPONSE, (res) => {
@@ -58,6 +63,8 @@ const AuthContextProvider: FC = ({ children }) => {
       // login etc.
       // ui info/notification
       console.log({ res }, "client-LOGIN_RESPONSE");
+      setToken(res.token);
+      localStorage.setItem("online-docs-token", res.token);
       socket?.off(AuthEvents.LOGIN_RESPONSE);
     });
   };
