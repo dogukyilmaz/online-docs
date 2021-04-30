@@ -1,4 +1,5 @@
 import { compare } from "bcryptjs";
+import jwt from "jsonwebtoken";
 import Usr, { BaseUser, User } from "../models/User";
 
 export interface UserResponse {
@@ -24,7 +25,11 @@ export const login = async ({ email, password }: Omit<User, "name">): Promise<Us
     if (user) {
       const match = await compare(password, user.password);
       if (match) {
-        return { success: true, token: "token=>wqrqrqwrqwrqwrqw" };
+        const secret = process.env.JWT_SECRET!;
+        const token = jwt.sign({ user: user.id }, secret, {
+          expiresIn: "1d",
+        });
+        return { success: true, token };
       }
     }
     return { success: false, user: null, message: "Invalid credentials." };
