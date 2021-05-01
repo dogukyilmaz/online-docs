@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import socketioJwt from "socketio-jwt";
 import { findDocOrCreate, updateDoc } from "./controllers/doc";
 import connectDB from "./db";
-import { login, register } from "./controllers/user";
+import { loadUser, login, register } from "./controllers/user";
 dotenv.config();
 
 connectDB();
@@ -36,7 +36,8 @@ export enum AuthEvents {
   LOGIN = "user:login",
   LOGIN_RESPONSE = "user:login:response",
   LOGOUT = "user:logout",
-  GET_USER = "user:get",
+  LOAD_USER = "user:load",
+  SET_USER = "user:set",
 }
 
 export type SocketJWT = Socket & {
@@ -53,14 +54,15 @@ io.use(
 );
 
 io.on("connection", (socket: SocketJWT) => {
-  console.log(socket.decoded_token);
   const { user } = socket.decoded_token;
 
   socket.on(Events.FETCH_DOCUMENT, async (docId: string) => {
     // TODO: check authorization
     const res = await findDocOrCreate(docId, user);
     if (!res.success) {
-      socket.emit(Events.FETCH_DOCUMENT_ERROR, res.message);
+      // TODO: specify error responses
+      // emit multi scenerios by types
+      // socket.emit(Events.FETCH_DOCUMENT_ERROR, res.message);
       return;
     }
 
@@ -79,6 +81,12 @@ io.on("connection", (socket: SocketJWT) => {
 
   socket.on(Events.SELECTION_CHANGE, (range) => {
     socket.broadcast.emit(Events.UPDATE_SELECTION, range);
+  });
+
+  socket.on(AuthEvents.LOAD_USER, async () => {
+    const res = await loadUser(user);
+    // TODO: handle fail situation
+    if (res.success) socket.emit(AuthEvents.SET_USER, res.user);
   });
 
   socket.on(AuthEvents.REGISTER, async (authInfo) => {
@@ -114,5 +122,14 @@ app.get("/", (req: Request, res: Response) => {
 // });
 
 const PORT = process.env.PORT || 5000;
+
+process.once("SIGUSR2", function () {
+  process.kill(process.pid, "SIGUSR2");
+});
+
+process.on("SIGINT", function () {
+  // this is only called on ctrl+c, not restart
+  process.kill(process.pid, "SIGINT");
+});
 
 httpServer.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));

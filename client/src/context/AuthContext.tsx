@@ -24,6 +24,7 @@ export interface AuthenticationContext {
   socket?: Socket;
   register: (credentials: AuthUser) => void;
   login: (credentials: AuthUser) => void;
+  loadUser: () => void;
 }
 
 const AuthContext = createContext<AuthenticationContext>({
@@ -32,6 +33,7 @@ const AuthContext = createContext<AuthenticationContext>({
   socket: undefined,
   register: () => {},
   login: () => {},
+  loadUser: () => {},
 });
 
 export const useAuthContext = () => useContext(AuthContext);
@@ -53,22 +55,25 @@ const AuthContextProvider: FC = ({ children }) => {
     };
   }, [token, setSocket]);
 
-  // useEffect(() => {
-  //   socket &&
-  //     socket.on("unauthorized", (error) => {
-  //       if (error.data.type == "UnauthorizedError" || error.data.code == "invalid_token") {
-  //         // redirect user to login page perhaps?
-  //         console.log("User token has expired");
-  //       } else {
-  //         console.log(error, "errrrr");
-  //       }
-  //     });
-  // }, [socket]);
+  useEffect(() => {
+    loadUser();
+  }, [socket, token]);
 
   useEffect(() => {
-    const token = localStorage.getItem("online-docs-token");
-    if (token) setToken(token);
+    if (!token) {
+      const localToken = localStorage.getItem("online-docs-token");
+      if (localToken) setToken(localToken);
+    }
   }, []);
+
+  const loadUser = async () => {
+    if (token) {
+      socket?.emit(AuthEvents.LOAD_USER);
+      socket?.once(AuthEvents.SET_USER, (user: User) => {
+        setUser(user);
+      });
+    }
+  };
 
   const login = async (userInfo: AuthUser) => {
     socket?.emit(AuthEvents.LOGIN, userInfo);
@@ -77,7 +82,6 @@ const AuthContextProvider: FC = ({ children }) => {
       // load user?
       // login etc.
       // ui info/notification
-      console.log({ res }, "client-LOGIN_RESPONSE");
       setToken(res.token);
       localStorage.setItem("online-docs-token", res.token);
       socket?.off(AuthEvents.LOGIN_RESPONSE);
@@ -91,7 +95,6 @@ const AuthContextProvider: FC = ({ children }) => {
       // load user?
       // login etc.
       // ui info/notification
-      console.log({ res }, "client-REGISTER_RESPONSE");
       socket?.off(AuthEvents.REGISTER_RESPONSE);
     });
   };
@@ -102,6 +105,7 @@ const AuthContextProvider: FC = ({ children }) => {
     socket,
     register,
     login,
+    loadUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

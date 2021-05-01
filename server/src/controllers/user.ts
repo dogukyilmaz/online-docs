@@ -9,6 +9,17 @@ export interface UserResponse {
   token?: string;
 }
 
+export const loadUser = async (userId: string): Promise<UserResponse> => {
+  try {
+    const user = await Usr.findById(userId);
+    if (!user) return { success: false, user: null, message: "User not found!" };
+    return { success: true, user };
+  } catch (error) {
+    console.log(error);
+    return { success: false, user: null, message: "Internal Server Error" };
+  }
+};
+
 export const register = async (data: BaseUser): Promise<UserResponse> => {
   try {
     const { _id } = await Usr.create({ ...data });

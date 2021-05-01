@@ -20,6 +20,8 @@ export enum AuthEvents {
   LOGIN = "user:login",
   LOGIN_RESPONSE = "user:login:response",
   LOGOUT = "user:logout",
+  LOAD_USER = "user:load",
+  SET_USER = "user:set",
 }
 
 export enum DocumentPrivacy {
