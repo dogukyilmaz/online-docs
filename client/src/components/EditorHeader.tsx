@@ -1,12 +1,14 @@
 import { formatDistanceToNow } from "date-fns";
 import { useDocContext } from "context/DocumentContext";
 import { useHistory } from "react-router";
+import { useUserContext } from "context/UserContext";
 
 interface Props {}
 
 // TODO: refactor this component
 const EditorHeader = (props: Props) => {
   const { document } = useDocContext();
+  const { user } = useUserContext();
   const history = useHistory();
   return (
     <div id='editor-header'>
@@ -31,7 +33,7 @@ const EditorHeader = (props: Props) => {
         </div>
       </div>
       <div>
-        <div>user: {document?.owner}</div>
+        <div>user: {user?.name || "NONAME"}</div>
         <div>Paylas/lock : {document?.privacy} </div>
       </div>
     </div>
