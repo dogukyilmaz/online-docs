@@ -1,7 +1,7 @@
 import Delta from "quill-delta";
 
 export const SOCKET_SERVER_URL =
-  process.env?.NODE_ENV === "development" ? "http://localhost:5000" : "https://online-docs-server.herokuapp.com/";
+  process.env?.NODE_ENV === "development" ? "http://localhost:5000" : "https://online-docs-server.herokuapp.com";
 
 export enum Events {
   DOCUMENT_CHANGE = "document-change",
@@ -20,6 +20,9 @@ export enum AuthEvents {
   LOGIN = "user:login",
   LOGIN_RESPONSE = "user:login:response",
   LOGOUT = "user:logout",
+}
+
+export enum UserEvents {
   LOAD_USER = "user:load",
   SET_USER = "user:set",
 }

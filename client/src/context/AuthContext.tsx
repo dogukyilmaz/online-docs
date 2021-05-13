@@ -4,14 +4,6 @@ import { io } from "socket.io-client";
 import { AuthEvents, Document, SOCKET_SERVER_URL } from "types";
 import { useDocContext } from "./DocumentContext";
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-  docs?: Document[];
-}
-
 export interface AuthUser {
   name?: string;
   email: string;
@@ -20,33 +12,26 @@ export interface AuthUser {
 
 export interface AuthenticationContext {
   token?: string;
-  user: User | null;
   socket?: Socket;
   register: (credentials: AuthUser) => void;
   login: (credentials: AuthUser) => void;
-  loadUser: () => void;
 }
 
 const AuthContext = createContext<AuthenticationContext>({
   token: undefined,
-  user: null,
   socket: undefined,
   register: () => {},
   login: () => {},
-  loadUser: () => {},
 });
 
 export const useAuthContext = () => useContext(AuthContext);
 
 const AuthContextProvider: FC = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string>();
   const [socket, setSocket] = useState<Socket>();
 
   useEffect(() => {
-    const s = io(SOCKET_SERVER_URL, {
-      extraHeaders: { Authorization: `Bearer ${token}` },
-    });
+    const s = io(`${SOCKET_SERVER_URL}/auth`);
 
     setSocket(s);
     console.log("connected");
@@ -56,28 +41,16 @@ const AuthContextProvider: FC = ({ children }) => {
   }, [token, setSocket]);
 
   useEffect(() => {
-    loadUser();
-  }, [socket, token]);
-
-  useEffect(() => {
     if (!token) {
       const localToken = localStorage.getItem("online-docs-token");
       if (localToken) setToken(localToken);
     }
   }, []);
 
-  const loadUser = async () => {
-    if (token) {
-      socket?.emit(AuthEvents.LOAD_USER);
-      socket?.once(AuthEvents.SET_USER, (user: User) => {
-        setUser(user);
-      });
-    }
-  };
-
   const login = async (userInfo: AuthUser) => {
     socket?.emit(AuthEvents.LOGIN, userInfo);
     socket?.on(AuthEvents.LOGIN_RESPONSE, (res) => {
+      console.log({ res }, "login auth context");
       // TODO:
       // load user?
       // login etc.
@@ -101,11 +74,9 @@ const AuthContextProvider: FC = ({ children }) => {
 
   const value = {
     token,
-    user,
     socket,
     register,
     login,
-    loadUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
