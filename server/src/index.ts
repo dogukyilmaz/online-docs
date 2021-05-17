@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
-import { Socket, Server, BroadcastOperator, Namespace, ServerOptions, RemoteSocket } from "socket.io";
+import { Socket, ServerOptions, Namespace } from "socket.io";
 import dotenv from "dotenv";
-import socketioJwt from "socketio-jwt";
+import socketioJwt, { authorize } from "socketio-jwt";
 import { findDocOrCreate, updateDoc } from "./controllers/doc";
 import connectDB from "./db";
 import { loadUser, login, register } from "./controllers/user";
@@ -38,22 +38,90 @@ export enum AuthEvents {
   LOGOUT = "user:logout",
   LOAD_USER = "user:load",
   SET_USER = "user:set",
+  USER_NOT_AUTH = "user:not-authorized",
 }
 
 export type SocketJWT = Socket & {
   decoded_token?: any;
 };
 
-io.use(
+const authNs: Namespace = io.of("/auth");
+const userNs: Namespace = io.of("/user");
+const docNs: Namespace = io.of("/doc");
+
+docNs.use(
   socketioJwt.authorize({
     secret: process.env.JWT_SECRET!,
     timeout: 15000,
     auth_header_required: true,
     handshake: true,
-  })
+  }) as any
 );
 
-io.on("connection", (socket: SocketJWT) => {
+authNs.use(
+  socketioJwt.authorize({
+    secret: process.env.JWT_SECRET!,
+    timeout: 15000,
+    auth_header_required: true,
+    handshake: true,
+  }) as any
+);
+
+// authNs.use((socket: SocketJWT, next: any) => {
+//   console.log("error");
+//   const err: any = new Error("not authorized");
+//   err.data = { content: "Please retry later" }; // additional details
+//   next(err);
+// });
+
+// io.on("connection", (s: Socket) => {
+//   console.log("connectted sth");
+
+//   s.on(AuthEvents.LOAD_USER, () => {
+//     console.log("load user event");
+//   });
+// });
+
+userNs.on("connection", (socket: SocketJWT) => {
+  console.log("userNs.on");
+  const jwt = socket?.decoded_token || "";
+
+  console.log(jwt, "jwt");
+  if (!jwt) return socket.emit(AuthEvents.USER_NOT_AUTH);
+  // const user = "erss";
+
+  console.log("userNs", jwt.user);
+  console.log(socket.handshake.headers);
+
+  socket.on(AuthEvents.LOAD_USER, async () => {
+    console.log("LOAD_USER");
+    if (!jwt) return;
+    console.log("token");
+    const res = await loadUser(jwt.user);
+    // TODO: handle fail situation
+    if (res.success) socket.emit(AuthEvents.SET_USER, res.user);
+  });
+});
+
+authNs.on("connection", (socket: SocketJWT) => {
+  console.log("authNs");
+
+  socket.on(AuthEvents.REGISTER, async (authInfo) => {
+    console.log("REGISTER");
+    const result = await register(authInfo);
+    socket.emit(AuthEvents.REGISTER_RESPONSE, result);
+    console.log(AuthEvents.REGISTER, result);
+  });
+
+  socket.on(AuthEvents.LOGIN, async (authInfo) => {
+    console.log("LOGIN", authInfo);
+    const result = await login(authInfo);
+    socket.emit(AuthEvents.LOGIN_RESPONSE, result);
+  });
+});
+
+docNs.on("connection", (socket: SocketJWT) => {
+  console.log("docNs");
   const { user } = socket.decoded_token;
 
   socket.on(Events.FETCH_DOCUMENT, async (docId: string) => {
@@ -63,6 +131,7 @@ io.on("connection", (socket: SocketJWT) => {
       // TODO: specify error responses
       // emit multi scenerios by types
       // socket.emit(Events.FETCH_DOCUMENT_ERROR, res.message);
+      console.log("error");
       return;
     }
 
@@ -81,23 +150,6 @@ io.on("connection", (socket: SocketJWT) => {
 
   socket.on(Events.SELECTION_CHANGE, (range) => {
     socket.broadcast.emit(Events.UPDATE_SELECTION, range);
-  });
-
-  socket.on(AuthEvents.LOAD_USER, async () => {
-    const res = await loadUser(user);
-    // TODO: handle fail situation
-    if (res.success) socket.emit(AuthEvents.SET_USER, res.user);
-  });
-
-  socket.on(AuthEvents.REGISTER, async (authInfo) => {
-    const result = await register(authInfo);
-    socket.emit(AuthEvents.REGISTER_RESPONSE, result);
-    console.log(AuthEvents.REGISTER, result);
-  });
-
-  socket.on(AuthEvents.LOGIN, async (authInfo) => {
-    const result = await login(authInfo);
-    socket.emit(AuthEvents.LOGIN_RESPONSE, result);
   });
 });
 
@@ -122,14 +174,5 @@ app.get("/", (req: Request, res: Response) => {
 // });
 
 const PORT = process.env.PORT || 5000;
-
-process.once("SIGUSR2", function () {
-  process.kill(process.pid, "SIGUSR2");
-});
-
-process.on("SIGINT", function () {
-  // this is only called on ctrl+c, not restart
-  process.kill(process.pid, "SIGINT");
-});
 
 httpServer.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
