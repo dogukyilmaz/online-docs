@@ -49,23 +49,23 @@ const authNs: Namespace = io.of("/auth");
 const userNs: Namespace = io.of("/user");
 const docNs: Namespace = io.of("/doc");
 
-docNs.use(
-  socketioJwt.authorize({
-    secret: process.env.JWT_SECRET!,
-    timeout: 15000,
-    auth_header_required: true,
-    handshake: true,
-  }) as any
-);
+// docNs.use(
+//   socketioJwt.authorize({
+//     secret: process.env.JWT_SECRET!,
+//     timeout: 15000,
+//     auth_header_required: true,
+//     handshake: true,
+//   }) as any
+// );
 
-authNs.use(
-  socketioJwt.authorize({
-    secret: process.env.JWT_SECRET!,
-    timeout: 15000,
-    auth_header_required: true,
-    handshake: true,
-  }) as any
-);
+// authNs.use(
+//   socketioJwt.authorize({
+//     secret: process.env.JWT_SECRET!,
+//     timeout: 15000,
+//     auth_header_required: true,
+//     handshake: true,
+//   }) as any
+// );
 
 // authNs.use((socket: SocketJWT, next: any) => {
 //   console.log("error");
