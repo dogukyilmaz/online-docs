@@ -10,6 +10,7 @@ export interface UserResponse {
 }
 
 export const loadUser = async (userId: string): Promise<UserResponse> => {
+  console.log("inside load user funcs");
   try {
     const user = await Usr.findById(userId);
     if (!user) return { success: false, user: null, message: "User not found!" };
