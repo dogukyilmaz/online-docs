@@ -30,7 +30,7 @@ const docSocket = (socket: SocketJWT) => {
     socket.emit(Events.LOAD_DOCUMENT, res.doc);
 
     socket.on(Events.DOCUMENT_CHANGE, (delta) => {
-      socket.broadcast.to(docId).emit(Events.UPDATE_DOCUMENT, delta);
+      socket.to(docId).emit(Events.UPDATE_DOCUMENT, delta);
     });
 
     socket.on(Events.SAVE_DOCUMENT, async (content) => {
