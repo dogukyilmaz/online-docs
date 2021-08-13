@@ -1,9 +1,9 @@
-import { createContext, FC, useContext, useState } from "react";
-import { Socket } from "socket.io-client";
-import Quill from "quill";
-import { Document } from "types";
+import { createContext, FC, useContext, useState } from 'react';
+import { Socket } from 'socket.io-client';
+import Quill from 'quill';
+import { Document } from 'types';
 
-type NullableDoc = Omit<Document, "content"> | null;
+type NullableDoc = Omit<Document, 'content'> | null;
 
 export interface DocumentContext {
   document?: NullableDoc;

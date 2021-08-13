@@ -1,26 +1,26 @@
-import { useCallback, useEffect } from "react";
-import { useParams } from "react-router";
-import { io } from "socket.io-client";
-import Quill from "quill";
-import { useEditorLoader, useFetchDocument, useAutoSaver, useTextChangeHandler, useSelectionHandler } from "hooks";
-import { useAuthContext } from "context/AuthContext";
-import { useDocContext } from "context/DocumentContext";
-import { SOCKET_SERVER_URL } from "types";
-import "quill/dist/quill.snow.css";
+import { useCallback, useEffect } from 'react';
+import { useParams } from 'react-router';
+import { io } from 'socket.io-client';
+import Quill from 'quill';
+import { useEditorLoader, useFetchDocument, useAutoSaver, useTextChangeHandler, useSelectionHandler } from 'hooks';
+import { useAuthContext } from 'context/AuthContext';
+import { useDocContext } from 'context/DocumentContext';
+import { SOCKET_SERVER_URL } from 'types';
+import 'quill/dist/quill.snow.css';
 
 const TOOLBAR = [
   [{ font: [] }],
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
-  ["bold", "italic", "underline" /*, "strike"*/],
-  [{ list: "ordered" }, { list: "bullet" }],
+  ['bold', 'italic', 'underline' /*, "strike"*/],
+  [{ list: 'ordered' }, { list: 'bullet' }],
   // [{ indent: "-1" }, { indent: "+1" }],
   [{ align: [] }],
   [{ color: [] }, { background: [] }],
-  [{ script: "sub" }, { script: "super" }],
-  ["link"],
-  ["image", "blockquote", "code-block"],
+  [{ script: 'sub' }, { script: 'super' }],
+  ['link'],
+  ['image', 'blockquote', 'code-block'],
   // [{ direction: "rtl" }],
-  ["clean"],
+  ['clean'],
 ];
 
 interface TextEditorProps {}
@@ -54,11 +54,11 @@ const TextEditor = (props: TextEditorProps) => {
   const editorRef = useCallback(
     (wrapper) => {
       if (!wrapper) return;
-      wrapper.innerHTML = "";
-      const editor = document.createElement("div");
+      wrapper.innerHTML = '';
+      const editor = document.createElement('div');
       wrapper.append(editor);
-      const q = new Quill(editor, { theme: "snow", modules: { toolbar: TOOLBAR } });
-      q.disable();
+      const q = new Quill(editor, { theme: 'snow', modules: { toolbar: TOOLBAR } });
+      // q.disable();
       setQuill(q);
     },
     [setQuill]

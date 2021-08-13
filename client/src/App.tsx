@@ -1,16 +1,16 @@
-import { useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
-import { v4 } from "uuid";
-import EditorHeader from "components/EditorHeader";
-import TextEditor from "components/TextEditor";
-import MyDocuments from "components/MyDocuments";
-import Profile from "components/Profile";
-import Login from "components/Login";
-import Register from "components/Register";
-import { useUserContext } from "context/UserContext";
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { v4 } from 'uuid';
+import EditorHeader from 'components/EditorHeader';
+import TextEditor from 'components/TextEditor';
+import MyDocuments from 'components/MyDocuments';
+import Profile from 'components/Profile';
+import Login from 'components/Login';
+import Register from 'components/Register';
+import { useAuthContext } from 'context/AuthContext';
 
 function App() {
-  const { loadUser } = useUserContext();
+  const { loadUser } = useAuthContext();
 
   useEffect(() => {
     loadUser();
